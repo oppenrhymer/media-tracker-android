@@ -26,6 +26,10 @@ class RegisterViewModel /*(
 
     private val _confirmPassword = MutableStateFlow("")
     val confirmPassword = _confirmPassword.asStateFlow()
+
+    private val _errorMessage = MutableStateFlow("")
+    val errorMessage = _errorMessage.asStateFlow()
+
     fun setDisplayName(newValue: String) {
         _displayName.value = newValue
     }
@@ -51,6 +55,8 @@ class RegisterViewModel /*(
         if (!isFormValid()) {
             return
         }
+        Log.e("RegisterScreen", "Your form data checked out, but, sadly, the backend is not implemented.!", )
+        _errorMessage.value = "Your form data checked out, but, sadly, the backend is not implemented.!"
         viewModelScope.launch {
             //userRepository.createAccount(displayName.value, userName.value, email.value, password.value)
         }
@@ -60,10 +66,12 @@ class RegisterViewModel /*(
         var isValid: Boolean = true
         if (confirmPassword.value != password.value) {
             Log.e("RegisterScreen", "ValidationError: passwords don't match! ", )
+            _errorMessage.value = "Passwords do not match!"
             isValid = false
         } else if (displayName.value.isBlank() || userName.value.isBlank() || email.value.isBlank() ||
             password.value.isBlank() || confirmPassword.value.isBlank()) {
             Log.e("RegisterScreen","ValidationError: One or more fields is null or empty")
+            _errorMessage.value = "You must fill out all fields!"
             isValid = false
         }
         return isValid
