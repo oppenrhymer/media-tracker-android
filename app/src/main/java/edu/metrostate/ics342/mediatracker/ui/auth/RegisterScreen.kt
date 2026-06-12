@@ -15,11 +15,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -35,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -65,13 +69,17 @@ fun RegisterScreen(
     //var email by remember { mutableStateOf("")}
     //var password by remember { mutableStateOf("")}
     //var confirmPassword by remember { mutableStateOf("")}
+    //var errorMessage by remember { mutableStateOf<String?>( value = null)}
+
     val displayName by viewModel.displayName.collectAsState()
     val userName by viewModel.userName.collectAsState()
     val email       by viewModel.email.collectAsState()
     val password    by viewModel.password.collectAsState()
     val confirmPassword    by viewModel.confirmPassword.collectAsState()
-    val focusManager = LocalFocusManager.current
+    val errorMessage by viewModel.errorMessage.collectAsState()
 
+    val focusManager = LocalFocusManager.current
+    //val scrollState = rememberScrollState();
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -79,11 +87,17 @@ fun RegisterScreen(
         verticalArrangement   = Arrangement.Center,
         horizontalAlignment   = Alignment.CenterHorizontally
     ) {
+        /*Icon(
+            imageVector = ,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(48.dp)
+        )*/
         Image(painterResource(edu.metrostate.ics342.mediatracker.R.drawable.smart_display),
             contentDescription = "Application Icon",
-            modifier = Modifier.size(width = 60.dp, height = 60.dp)
+            modifier = Modifier.size(width = 72.dp, height = 72.dp)
                             .background(PrimaryContainer, RoundedCornerShape(16.dp))
-                            .padding(12.dp)
+                            .padding(18.dp)
 
              )
 
@@ -93,7 +107,7 @@ fun RegisterScreen(
         Spacer(Modifier.height(8.dp))
 
         Text(stringResource(edu.metrostate.ics342.mediatracker.R.string.register_tag_line),
-            style = MaterialTheme.typography.bodyMedium,
+            style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center)
 
@@ -111,7 +125,8 @@ fun RegisterScreen(
             keyboardActions = KeyboardActions(
                 onNext = { focusManager.moveFocus(FocusDirection.Down) }
             ),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(8.dp)
         )
 
         OutlinedTextField(
@@ -126,7 +141,8 @@ fun RegisterScreen(
             keyboardActions = KeyboardActions(
                 onNext = { focusManager.moveFocus(FocusDirection.Down) }
             ),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(8.dp)
         )
 
         OutlinedTextField(
@@ -141,10 +157,9 @@ fun RegisterScreen(
             keyboardActions = KeyboardActions(
                 onNext = { focusManager.moveFocus(FocusDirection.Down) }
             ),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(8.dp)
         )
-
-        Spacer(Modifier.height(12.dp))
 
         OutlinedTextField(
             value         = password,
@@ -159,7 +174,8 @@ fun RegisterScreen(
             keyboardActions = KeyboardActions(
                 onDone = { focusManager.clearFocus(); viewModel.onSignUpClicked() }
             ),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(8.dp)
         )
         //SecureTextField
         OutlinedTextField(
@@ -175,7 +191,8 @@ fun RegisterScreen(
             keyboardActions = KeyboardActions(
                 onDone = { focusManager.clearFocus(); viewModel.onSignUpClicked() }
             ),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(8.dp)
         )
 
 
@@ -183,7 +200,9 @@ fun RegisterScreen(
 
         Button(
             onClick  = {
-                            if (confirmPassword != password) {
+                            focusManager.clearFocus();
+                            viewModel.onSignUpClicked()
+                            /*if (confirmPassword != password) {
                                 Log.e("RegisterScreen", "ValidationError: passwords don't match! ", )
 
                             } else if (displayName.isNullOrBlank() || userName.isNullOrBlank() || email.isNullOrBlank() ||
@@ -192,7 +211,7 @@ fun RegisterScreen(
                             } else {
                                 Log.d("RegisterScreen","ValidationSuccess!")
                                 focusManager.clearFocus(); viewModel.onSignUpClicked()
-                            }
+                            }*/
                        },
             enabled  = true, //TODO change to something meaningful
             modifier = Modifier
@@ -208,6 +227,14 @@ fun RegisterScreen(
             } else {*/
                 Text(stringResource(edu.metrostate.ics342.mediatracker.R.string.sign_up_button))
             //}
+        }
+        if (errorMessage != "") {
+            Spacer(Modifier.height(8.dp))
+            Text(
+                errorMessage!!,
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall
+            )
         }
 
         Spacer(Modifier.height(16.dp))
