@@ -1,7 +1,9 @@
 package edu.metrostate.ics342.mediatracker.ui.auth
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import edu.metrostate.ics342.mediatracker.data.UserRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,7 +20,7 @@ class AuthViewModel : ViewModel() {
     }
 
     // ── Login ─────────────────────────────────────────────────────────────
-
+    private val userRepository = UserRepository()
     private val _email    = MutableStateFlow("")
     val email: StateFlow<String> = _email.asStateFlow()
 
@@ -32,17 +34,36 @@ class AuthViewModel : ViewModel() {
     fun onPasswordChange(value: String) { _password.value = value }
 
     fun onLoginClick() {
+        if (!isValidForm()) {
+            return
+        }
         viewModelScope.launch {
             _loginState.value = AuthUiState.Loading
-            delay(800)
-            if (_email.value.isNotBlank() && _password.value.isNotBlank()) {
+            val tokenResponse = userRepository.login(_email.value, _password.value)
+            if (tokenResponse.user != null) {
+                Log.d("AuthViewModel","Login was a success")
+                Log.d("AuthViewModel","accesstoken: ${tokenResponse.accessToken} | refreshToken: ${tokenResponse.refreshToken}")
+                Log.d("AuthViewModel","user: ${tokenResponse.user}")
                 _loginState.value = AuthUiState.Success
             } else {
-                _loginState.value = AuthUiState.Error(edu.metrostate.ics342.mediatracker.R.string.error_empty_credentials)
+                _loginState.value = AuthUiState.Error(edu.metrostate.ics342.mediatracker.R.string.error_problem_with_login)
             }
         }
     }
 
     fun resetLoginState() { _loginState.value = AuthUiState.Idle }
+
+    fun isValidForm(): Boolean {
+        if (_email.value.isBlank()) {
+            AuthUiState.Error(edu.metrostate.ics342.mediatracker.R.string.error_empty_email)
+            return false
+        }
+        if (_password.value.isBlank()) {
+            AuthUiState.Error(edu.metrostate.ics342.mediatracker.R.string.error_empty_password)
+            return false
+        }
+        return true
+    }
+
 
 }
