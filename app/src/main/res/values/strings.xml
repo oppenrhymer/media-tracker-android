@@ -90,7 +90,10 @@
     <string name="feed_media_something">something</string>
 
     <!-- Errors -->
+    <string name="error_problem_with_login">Problem logging in!</string>
     <string name="error_empty_credentials">Please enter your email and password.</string>
+    <string name="error_empty_email">Please enter a valid email address.</string>
+    <string name="error_empty_password">Please enter a password.</string>
     <string name="passwords_must_match">Passwords must match!</string>
 
     <!-- Media -->

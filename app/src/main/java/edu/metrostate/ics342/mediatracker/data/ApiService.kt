@@ -13,5 +13,5 @@ interface ApiService {
     suspend fun createUser(@Body request: CreateUserRequest): CreateUserResponse
 
     @POST("tokens")
-    suspend fun log(@Body request: TokenRequest): TokenResponse
+    suspend fun login(@Body request: TokenRequest): TokenResponse
 }

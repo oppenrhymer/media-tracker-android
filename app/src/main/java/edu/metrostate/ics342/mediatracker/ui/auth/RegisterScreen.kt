@@ -28,6 +28,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -77,9 +78,14 @@ fun RegisterScreen(
     val password    by viewModel.password.collectAsState()
     val confirmPassword    by viewModel.confirmPassword.collectAsState()
     val errorMessage by viewModel.errorMessage.collectAsState()
+    val registerState by viewModel.registerState.collectAsState()
 
     val focusManager = LocalFocusManager.current
     //val scrollState = rememberScrollState();
+
+    LaunchedEffect(key1 = registerState) {
+
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()

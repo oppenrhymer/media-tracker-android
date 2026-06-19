@@ -1,6 +1,10 @@
 package edu.metrostate.ics342.mediatracker.data.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class TokenResponse(
-    val clientId: String,
-    val clientSecret: String
+    val accessToken: String? = "",
+    val refreshToken: String? = "",
+    val user: UserProfile? = null
 )

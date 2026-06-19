@@ -12,6 +12,8 @@ class RegisterViewModel /*(
     private val userRepository: UserRepository
 ) */: ViewModel()    {
 
+    private val userRepository = UserRepository()
+
     private val _displayName = MutableStateFlow("")
     val displayName = _displayName.asStateFlow()
 
@@ -29,6 +31,9 @@ class RegisterViewModel /*(
 
     private val _errorMessage = MutableStateFlow("")
     val errorMessage = _errorMessage.asStateFlow()
+
+    private val _registerState = MutableStateFlow("")
+    val registerState = _registerState.asStateFlow()
 
     fun setDisplayName(newValue: String) {
         _displayName.value = newValue
@@ -58,7 +63,7 @@ class RegisterViewModel /*(
         Log.e("RegisterScreen", "Your form data checked out, but, sadly, the backend is not implemented.!", )
         _errorMessage.value = "Your form data checked out, but, sadly, the backend is not implemented.!"
         viewModelScope.launch {
-            //userRepository.createAccount(displayName.value, userName.value, email.value, password.value)
+            userRepository.createAccount(displayName.value, userName.value, email.value, password.value)
         }
     }
 
