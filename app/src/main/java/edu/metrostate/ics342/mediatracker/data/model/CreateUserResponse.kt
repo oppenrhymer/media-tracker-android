@@ -8,11 +8,11 @@ data class CreateUserResponse(
     val email: String,
     val username: String,
     val displayName: String,
-    val bio: String,
-    val avatarUrl: String,
-    val followerCount: Int,
-    val followingCount: Int,
-    val trackedCount: Int,
-    val isFollowing: Boolean,
-    val createdAt: String
+    val bio: String? = null,
+    val avatarUrl: String? = null,
+    val followerCount: Int? = null,
+    val followingCount: Int? = null,
+    val trackedCount: Int? = null,
+    val isFollowing: Boolean? = null,
+    val createdAt: String? = null
 )

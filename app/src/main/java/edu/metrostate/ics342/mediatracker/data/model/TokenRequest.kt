@@ -7,7 +7,7 @@ data class TokenRequest(
     val grantType: String,
     val email: String? = null,
     val password: String? = null,
-    val refreshToken: String? = null,
+    //val refreshToken: String? = null,
     val clientId: String,
     val clientSecret: String
 )
