@@ -1,16 +1,19 @@
 package edu.metrostate.ics342.mediatracker.ui.auth
 
+import android.app.Application
 import android.util.Log
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import edu.metrostate.ics342.mediatracker.data.SessionRepository
 import edu.metrostate.ics342.mediatracker.data.UserRepository
-import kotlinx.coroutines.delay
+import edu.metrostate.ics342.mediatracker.data.datastore.DefaultSessionRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class AuthViewModel : ViewModel() {
+class AuthViewModel(application: Application) : AndroidViewModel(application) {
 
     sealed class AuthUiState {
         object Idle    : AuthUiState()
@@ -18,7 +21,7 @@ class AuthViewModel : ViewModel() {
         object Success : AuthUiState()
         data class Error(val msgResId: Int) : AuthUiState()
     }
-
+    private val sessionRepository: SessionRepository = DefaultSessionRepository(application)
     // ── Login ─────────────────────────────────────────────────────────────
     private val userRepository = UserRepository()
     private val _email    = MutableStateFlow("")
@@ -35,6 +38,7 @@ class AuthViewModel : ViewModel() {
 
     fun onLoginClick() {
         if (!isValidForm()) {
+            //_loginState.value = AuthUiState.Success
             return
         }
         viewModelScope.launch {
@@ -44,6 +48,11 @@ class AuthViewModel : ViewModel() {
                 Log.d("AuthViewModel","Login was a success")
                 Log.d("AuthViewModel","accesstoken: ${tokenResponse.accessToken} | refreshToken: ${tokenResponse.refreshToken}")
                 Log.d("AuthViewModel","user: ${tokenResponse.user}")
+                sessionRepository.saveSession(
+                    accessToken = tokenResponse.accessToken,
+                    refreshToken = tokenResponse.refreshToken,
+                    user = tokenResponse.user
+                )
                 _loginState.value = AuthUiState.Success
             } else {
                 _loginState.value = AuthUiState.Error(edu.metrostate.ics342.mediatracker.R.string.error_problem_with_login)
