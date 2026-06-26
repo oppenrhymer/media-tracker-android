@@ -1,5 +1,6 @@
 package edu.metrostate.ics342.mediatracker.navigation
 
+import android.net.Uri
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -21,6 +22,7 @@ import edu.metrostate.ics342.mediatracker.ui.profile.EditProfileScreen
 import edu.metrostate.ics342.mediatracker.ui.profile.MyProfileScreen
 import edu.metrostate.ics342.mediatracker.ui.profile.UserProfileScreen
 import edu.metrostate.ics342.mediatracker.ui.review.WriteReviewScreen
+import edu.metrostate.ics342.mediatracker.ui.search.SearchResultsScreen
 import edu.metrostate.ics342.mediatracker.ui.search.SearchScreen
 import edu.metrostate.ics342.mediatracker.ui.settings.SettingsScreen
 
@@ -80,6 +82,24 @@ fun MediaTrackerNavGraph(navController: NavHostController) {
 
             composable(Routes.SEARCH) {
                 SearchScreen(
+                    onSearch = { query ->
+                        navController.navigate("search_results?query=${Uri.encode(query)}")
+                    },
+                    onMediaClick = { mediaId -> navController.navigate("media_detail/$mediaId") }
+                )
+            }
+
+            composable(
+                route = Routes.SEARCH_RESULTS,
+                arguments = listOf(navArgument("query") {
+                    type         = NavType.StringType
+                    defaultValue = ""
+                })
+            ) { backStackEntry ->
+                val query = backStackEntry.arguments?.getString("query") ?: ""
+                SearchResultsScreen(
+                    initialQuery = query,
+                    onBack       = { navController.popBackStack() },
                     onMediaClick = { mediaId -> navController.navigate("media_detail/$mediaId") }
                 )
             }
